@@ -17,6 +17,7 @@ export function SearchBar() {
         onChangeText={setSearchText}
         value={searchText}
         placeholder="Search..."
+        placeholderTextColor="gray"
         autoFocus
       />
       <TouchableOpacity style={styles.searchButton}>
