@@ -1,16 +1,47 @@
-import { Stack } from "expo-router";
-import { Drawer } from "expo-router/drawer"
+import { router, Stack } from "expo-router";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+//import { supabase } from "@/lib/supabase";
 
 export default function RootLayout() {
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+
+  // useEffect(() => {
+  //   const { data } = supabase.auth.onAuthStateChange((event, session) => {
+  //     if (event == "SIGNED_OUT") {
+  //       router.replace("/(auth)/sign-in")
+  //     }
+  //   });
+
+  //   return () => {
+  //     data.subscription.unsubscribe()
+  //   }
+  // }, [])
+
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <Stack >
-        <Stack.Screen name="(drawer)" options={{ headerShown: false }}/>
+    <AuthProvider>
+      <RootNavigator />
+    </AuthProvider>
+  );
+}
+
+function RootNavigator() {
+  const { isLoggedIn, isLoading } = useAuth();
+
+  //if (isLoading) return null;
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+        </Stack.Protected>
+
+        <Stack.Protected guard={!isLoggedIn}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack.Protected>
       </Stack>
     </GestureHandlerRootView>
-    // <Stack >
-    //   <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-    // </Stack>
-  )
+  );
 }
