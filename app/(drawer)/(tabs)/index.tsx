@@ -28,7 +28,6 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <View>
-        <SearchBar />
         <FlatList
           data={posts}
           keyExtractor={(item) => item.id}
