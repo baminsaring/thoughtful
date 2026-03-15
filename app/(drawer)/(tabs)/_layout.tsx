@@ -2,13 +2,24 @@ import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 import { Text, Pressable, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function Layout() {
+
+  const router = useRouter();
+  
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "black",
-        headerLeft: () => <DrawerToggleButton />,
+        headerLeft: () => {
+          return router.canGoBack() ? (
+            <TouchableOpacity style={{ padding: 10 }} onPress={() => router.back()}>
+              <Ionicons name="arrow-back-outline" size={24} />
+            </TouchableOpacity>
+          ) : (<DrawerToggleButton />)
+        },
         headerRight: () => (
           <TouchableOpacity style={{ paddingRight: 10 }} onPress={() => alert("No notifications")}>
             <Ionicons name="notifications-outline" size={24} />
@@ -66,6 +77,16 @@ export default function Layout() {
               size={24}
             />
           ),
+        }}
+      />
+      <Tabs.Screen 
+        name="profile"
+        options={{
+          title: "Profile",
+          href: null,
+          tabBarStyle: {
+            display: 'none'
+          }
         }}
       />
     </Tabs>

@@ -7,12 +7,15 @@ import React, {
 } from "react";
 import authService from "@/lib/authService";
 import { Alert } from "react-native";
-import { useRouter } from "expo-router";
 
 // Define the Shape of your Context data
 type AuthProps = {
+  updateUser: (
+    fullName: string,
+    avatarUrl: string,
+  ) => Promise<{ success: boolean }>;
   signIn: (email: string, password: string) => void;
-  signUp: (fullName: string, email: string, password: string, avatarUrl: string) => void;
+  signUp: (fullName: string, email: string, password: string) => void;
   logout: () => void;
   user: any;
   isLoggedIn: boolean;
@@ -28,38 +31,35 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  const router = useRouter();
-
   const checkUser = async () => {
     try {
       setIsLoading(true);
       const currentUser = await authService.getUser();
-      //console.log("Current User: ", currentUser);
+      //console.log("Current User Data: ", currentUser);
 
       if (currentUser) {
         setIsLoggedIn(true);
-        setUser(currentUser)
+        setUser(currentUser);
       } else {
         setIsLoggedIn(false);
         setUser(null);
       }
     } catch (error) {
       console.log("CheckUser: Error: ", error);
-      setIsLoggedIn(false)
-      setUser(null)
+      setIsLoggedIn(false);
+      setUser(null);
     } finally {
-      false
+      false;
     }
   };
 
-  const signUp = async (fullName: string, email: string, password: string, avatarUrl: string) => {
+  const signUp = async (fullName: string, email: string, password: string) => {
     try {
       setIsLoading(true);
       const { data, error } = await authService.signUpWithEmail(
         fullName,
         email,
         password,
-        avatarUrl
       );
       setIsLoading(false);
 
@@ -80,17 +80,46 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
       if (error) {
         Alert.alert("Login failed. Check your credentials!");
-        setIsLoading(false)
+        setIsLoading(false);
         return;
       }
 
       if (data) {
         await checkUser();
       }
-
     } catch (error: any) {
       console.log("Sign in failed! ", error.message);
-      setIsLoading(false)
+      setIsLoading(false);
+    }
+  };
+
+  const updateUser = async (
+    fullName: string,
+    avatarFilePath: string,
+  ): Promise<{ success: boolean }> => {
+    try {
+      const { data, success, error } = await authService.updateUser(
+        fullName,
+        avatarFilePath,
+      );
+
+      if (error) {
+        Alert.alert("User data update failed!");
+        return {
+          success: false,
+        };
+      }
+
+      if (success) {
+        await checkUser();
+      }
+
+      return { success: true };
+    } catch (error: any) {
+      console.log("Update user error: ", error.message);
+      return {
+        success: false,
+      };
     }
   };
 
@@ -105,13 +134,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   };
 
   useEffect(() => {
-
-    checkUser(); 
+    checkUser();
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
+        updateUser,
         isLoggedIn,
         signIn,
         signUp,

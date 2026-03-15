@@ -13,8 +13,29 @@ const authService = {
         }
     },
 
+    async updateUser(fullName: string, avatarFilePath: string = "") {
+        try {
+            const { data: { user }, error } = await supabase.auth.updateUser({
+                data: {
+                    full_name: fullName,
+                    avatar_filePath: avatarFilePath
+                }
+            })
+
+            return {
+                data: user,
+                success: true,
+                error: error
+            }
+        } catch (error: any) {
+            return {
+                error: error.message
+            }
+        }
+    },
+
     /*** Create new user: Sign up ***/
-    async signUpWithEmail(fullName: string, email: string, password: string, avatarUrl: string) {
+    async signUpWithEmail(fullName: string, email: string, password: string) {
         try {
             const { data, error } = await supabase.auth.signUp({
                 email: email,
@@ -22,7 +43,7 @@ const authService = {
                 options: {
                     data: {
                         full_name: fullName,
-                        avatar_url: avatarUrl
+                        avatar_filePath: ""
                     }
                 }
             })

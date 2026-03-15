@@ -25,7 +25,7 @@ export default function DrawerLayout() {
         }}
       />
       <Drawer.Screen
-        name="add_new_article"
+        name="add-new-article"
         options={{
           drawerLabel: "Add new article",
           title: "Add new article",
@@ -35,7 +35,7 @@ export default function DrawerLayout() {
         }}
       />
       <Drawer.Screen
-        name="your_articles"
+        name="your-articles"
         options={{
           drawerLabel: "Your articles",
           title: "Your articles",
@@ -44,6 +44,7 @@ export default function DrawerLayout() {
           ),
         }}
       />
+      
     </Drawer>
   );
 }

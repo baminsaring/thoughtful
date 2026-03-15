@@ -10,7 +10,6 @@ export default function LoginScreen() {
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
 
   const { signUp } = useAuth();
 
@@ -22,7 +21,7 @@ export default function LoginScreen() {
     ) {
       Alert.alert("Fields can't be empty!");
     } else {
-      signUp(fullName, email, password, avatarUrl);
+      signUp(fullName, email, password);
     }
   };
 
@@ -56,14 +55,6 @@ export default function LoginScreen() {
           text={password}
           placeholder="Enter your password"
           onChangeText={setPassword}
-        />
-
-        {/* Avatar */}
-        <InputBox
-          label="Avatar"
-          text={avatarUrl}
-          placeholder="Paste the link of your photo"
-          onChangeText={setAvatarUrl}
         />
 
         {/* Submit Button */}
