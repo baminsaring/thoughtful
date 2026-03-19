@@ -45,7 +45,7 @@ export function PostCard({
 
   const getUserData = async () => {
     try {
-      const { data, error } = await profileService.getCreatorInfo(userId);
+      const { data, error } = await profileService.getUserData(userId);
 
       if (data) {
         const userData: UserType = {

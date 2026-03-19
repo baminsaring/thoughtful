@@ -4,7 +4,7 @@ const TABLE_NAME = "profiles"
 
 const profileService = {
 
-    async getCreatorInfo(user_id: number) {
+    async getUserData(user_id: number) {
         const { data, error } = await supabase
         .from(TABLE_NAME)
         .select()
