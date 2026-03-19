@@ -13,12 +13,13 @@ const authService = {
         }
     },
 
-    async updateUser(fullName: string, avatarFilePath: string = "") {
+    async updateUser(fullName: string, avatarUrl: string = "", avatarFilePath: string = "") {
         try {
             const { data: { user }, error } = await supabase.auth.updateUser({
                 data: {
                     full_name: fullName,
-                    avatar_filePath: avatarFilePath
+                    avatar_url: avatarUrl,
+                    avatar_file_path: avatarFilePath
                 }
             })
 
@@ -43,7 +44,8 @@ const authService = {
                 options: {
                     data: {
                         full_name: fullName,
-                        avatar_filePath: ""
+                        avatar_url: "",
+                        avatar_file_path: "",
                     }
                 }
             })

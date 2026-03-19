@@ -32,21 +32,23 @@ export default function profile() {
 
   const userData = {
     fullName: user?.user_metadata?.full_name ?? "",
-    avatarFilePath: user?.user_metadata?.avatar_filePath ?? "",
     email: user?.user_metadata?.email ?? "",
+    avatarUrl: user?.user_metadata?.avatar_url ?? "",
+    avatarFilePath: user?.user_metadata?.avatar_filePath ?? "",
   };
 
   const handleCamera = async () => {
     const persmissionResult = await ImagePicker.getCameraPermissionsAsync();
 
     if (!persmissionResult.granted) {
-      const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
-      if (!cameraPermission.granted){
-              Alert.alert(
-        "Permission required",
-        "Permission to access the camera is required.",
-      );
-      return;
+      const cameraPermission =
+        await ImagePicker.requestCameraPermissionsAsync();
+      if (!cameraPermission.granted) {
+        Alert.alert(
+          "Permission required",
+          "Permission to access the camera is required.",
+        );
+        return;
       }
     }
 
@@ -111,24 +113,23 @@ export default function profile() {
       filePath = data?.path;
     }
 
-    const { success } = await updateUser(new_name, filePath);
+    if (filePath) {
+      const avatarUrl = storageService.getImageUrl(BUCKET_NAME, filePath);
 
-    if (success) {
-      Alert.alert("Data update successfully!");
-      const data = storageService.getImageUrl(BUCKET_NAME, filePath);
-      setAvatar(data);
-      setShowAvatarEdit(false);
+      const { success } = await updateUser(new_name, avatarUrl, filePath);
+
+      if (success) {
+        setAvatar(avatarUrl);
+        setShowAvatarEdit(false);
+        Alert.alert("Data update successfully!");
+      }
     }
   };
 
   useEffect(() => {
     // Set avatar
-    if (userData.avatarFilePath) {
-      const avatarUrl = storageService.getImageUrl(
-        BUCKET_NAME,
-        userData.avatarFilePath,
-      );
-      setAvatar(avatarUrl);
+    if (userData.avatarUrl) {
+      setAvatar(userData.avatarUrl);
     }
 
     setFullName(userData.fullName);

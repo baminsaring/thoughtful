@@ -22,15 +22,14 @@ export default function CustomDrawerContent(props: any) {
   const { user, logout } = useAuth();
   const userData = {
     fullName: user?.user_metadata?.full_name ?? "",
-    avatarFilePath: user?.user_metadata?.avatar_filePath ?? "",
+    avatarUrl: user?.user_metadata?.avatar_url ?? "",
   }
 
   const [avatar, setAvatar] = useState<string | any>(avatarPlaceholder)
 
   useEffect(() => {
-    if (userData.avatarFilePath) {
-      const avatarUrl = storageService.getImageUrl(BUCKET_NAME, userData.avatarFilePath)
-      setAvatar(avatarUrl)
+    if (userData.avatarUrl) {
+      setAvatar(userData.avatarUrl)
     } else {
       setAvatar(avatarPlaceholder)
     }

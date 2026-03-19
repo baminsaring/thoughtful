@@ -1,92 +1,165 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Image } from "expo-image";
+import { useWindowDimensions } from "react-native";
+import RenderHtml from "react-native-render-html";
+import { useRouter } from "expo-router";
+import profileService from "@/lib/profileService";
 
+import { useArticle } from "@/contexts/ArticeContext";
+import { ArticleType } from "@/contexts/ArticeContext";
 
 //import user from "@/assets/images/person_placeholder.png";
 
 type Props = {
-    title: string,
-    content: string,
-    userImgUri: string
-}
+  articleId: number;
+  title: string;
+  content: string;
+  coverImgUrl: string;
+  userId: number;
+};
 
-export function PostCard({ title, content, userImgUri }: Props) {
+type UserType = {
+  fullName: string;
+  avatarUrl: string;
+};
 
+export function PostCard({
+  articleId,
+  title,
+  content,
+  coverImgUrl,
+  userId,
+}: Props) {
+  const [userInfo, setUserInfo] = useState<UserType>();
 
-    const MAX_CHARS = 250
+  const router = useRouter();
+  const MAX_CHARS = 250;
+  const { width } = useWindowDimensions();
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.userProfileContainer}>
-                {/* User Profile Image */}
-                <Image 
-                //    source={user}
-                    source={{ uri: userImgUri }}
-                    style={{ width: 50, height: 50, borderRadius: 50 }}
-                />
-                {/* User Name */}
-                <Text>John Doe</Text>
-                {/* Post created timeline */}
-                <Text>2 hr ago</Text>
-            </View>
+  const { setArticle } = useArticle();
 
-            {/* Header */}
-            <Text style={styles.heading}>{title}</Text>
+  const source = {
+    html: content,
+  };
 
-            {/* Sub Header */}
-            <Text style={styles.subHeading}>
+  const getUserData = async () => {
+    try {
+      const { data, error } = await profileService.getCreatorInfo(userId);
+
+      if (data) {
+        const userData: UserType = {
+          fullName: data[0]?.full_name,
+          avatarUrl: data[0]?.avatar_url,
+        };
+
+        setUserInfo(userData);
+      }
+    } catch (error) {
+      console.log("getUserData :: error: ", error);
+    }
+  };
+
+  const handleClick = () => {
+    const article: ArticleType = {
+      articleId: articleId,
+      title: title,
+      content: content,
+      coverUrl: coverImgUrl,
+      userFullName: userInfo?.fullName!,
+      userAvatarUrl: userInfo?.avatarUrl!,
+    };
+    setArticle(article);
+    router.push("/(drawer)/(tabs)/article");
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.userProfileContainer}>
+        {/* User Profile Image */}
+        <Image
+          //    source={user}
+          source={userInfo?.avatarUrl}
+          style={{ width: 40, height: 40, borderRadius: 50 }}
+        />
+        {/* User Name */}
+        <Text>{userInfo?.fullName}</Text>
+        {/* Post created timeline */}
+        {/* <Text>2 hr ago</Text> */}
+      </View>
+
+      {/* Header */}
+      <Text style={styles.heading}>{title}</Text>
+
+      {/* Sub Header */}
+      {/* <Text style={styles.subHeading}>
                 {content.length > MAX_CHARS ? content.slice(0, MAX_CHARS) : content}
-            </Text>
-            
-            {/* Button */}
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Read more</Text>
-            </TouchableOpacity>
-        </View>
-    )
+            </Text> */}
+      <RenderHtml contentWidth={width} source={source} />
+
+      {/* Button */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleClick}>
+          <Text style={styles.buttonText}>Read more</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 0,
-        minWidth:"90%",
-        margin: 10,
-        padding: 20,
-        gap: 20,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        borderWidth: 1
-    },
-    userProfileContainer: {
-        flex: 0,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        //borderWidth: 1
-    },
-    timelineText: {
-        textAlign: 'right',
-    },
-    heading: {
-        fontSize: 18,
-        fontWeight: 'bold'
-    },
-    subHeading: {
-        fontSize: 14,
-        fontStyle: 'italic',
-        textAlign: 'justify',
-    },
-    button: {
-        flex: 1,
-        padding: 10,
-        width: '95%',
-        backgroundColor: '#5263df',
-        borderRadius: 5,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        textAlign: 'center',
-        fontWeight: 'bold'
-    }
-})
+  container: {
+    flex: 0,
+    minWidth: "100%",
+    height: 300,
+    padding: 15,
+    marginBottom: 30,
+    gap: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+  },
+  userProfileContainer: {
+    flex: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  timelineText: {
+    textAlign: "right",
+  },
+  heading: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  subHeading: {
+    fontSize: 14,
+    fontStyle: "italic",
+    textAlign: "justify",
+  },
+  buttonContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  button: {
+    padding: 10,
+    width: "100%",
+    backgroundColor: "#5263df",
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+});
