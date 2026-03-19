@@ -12,7 +12,8 @@ import { Alert } from "react-native";
 type AuthProps = {
   updateUser: (
     fullName: string,
-    avatarUrl: string,
+    avatarUrl: string | any,
+    avatarFilePath: string
   ) => Promise<{ success: boolean }>;
   signIn: (email: string, password: string) => void;
   signUp: (fullName: string, email: string, password: string) => void;
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
+  // Get user data if user is authenticated
   const checkUser = async () => {
     try {
       setIsLoading(true);
@@ -92,14 +94,17 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       setIsLoading(false);
     }
   };
-
+ 
+  // Update user data
   const updateUser = async (
     fullName: string,
+    avatarUrl: string | any,
     avatarFilePath: string,
   ): Promise<{ success: boolean }> => {
     try {
       const { data, success, error } = await authService.updateUser(
         fullName,
+        avatarUrl,
         avatarFilePath,
       );
 
@@ -123,6 +128,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
+  // Logout user
   const logout = async () => {
     try {
       const { success } = await authService.logout();

@@ -24,6 +24,7 @@ export default function InputBox({ label, text, placeholder, onChangeText }: Pro
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     marginVertical: 10,
     gap: 5,
   },
