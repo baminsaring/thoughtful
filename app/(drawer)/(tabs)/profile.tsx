@@ -28,7 +28,7 @@ export default function profile() {
   const [avatar, setAvatar] = useState<string | any>(avatarPlaceholder);
   const [selectedImage, setSelectedImage] = useState<string | any>(null);
 
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, setRefresh } = useAuth();
 
   const userData = {
     fullName: user?.user_metadata?.full_name ?? "",
@@ -95,7 +95,7 @@ export default function profile() {
     let new_name = fullName != userData.fullName ? fullName : userData.fullName;
     let filePath: any;
 
-    // If userData,avatarFilePath is empty then upload a new avatar
+    // If userData, avatarFilePath is empty then upload a new avatar
     if (!userData.avatarFilePath && new_avatar) {
       const newFilePath = `public/avatar${Date.now()}`;
       const { data, error } = await storageService.uploadImage(
@@ -120,10 +120,12 @@ export default function profile() {
 
       if (success) {
         setAvatar(avatarUrl);
-        setShowAvatarEdit(false);
         Alert.alert("Data update successfully!");
+        setRefresh(true);
       }
     }
+
+    setShowAvatarEdit(false);
   };
 
   useEffect(() => {
@@ -148,7 +150,7 @@ export default function profile() {
         />
       </Pressable>
       <Text
-        style={[styles.titleLabel, { fontWeight: "bold" }]}
+        style={[styles.titleLabel, { fontWeight: "400" }]}
         onPress={() => setIsModalVisible(true)}
       >
         Edit

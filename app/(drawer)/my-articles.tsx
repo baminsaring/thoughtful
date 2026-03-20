@@ -21,11 +21,23 @@ export default function my_articles() {
     filterArticles();
   }, [articleList, user.id]);
 
+  if (myArticles.length == 0) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        <Text style={{ fontSize: 18 ,fontWeight: 'bold' }}>No Articles Found</Text>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
         data={myArticles}
-        keyExtractor={(item) => item.user_id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <PostCard
             articleId={item.id}

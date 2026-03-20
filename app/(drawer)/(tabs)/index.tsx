@@ -17,7 +17,7 @@ export default function Index() {
   //const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const router = useRouter();
-  const { articleList, isLoading } = useArticle();
+  const { articleList, isLoading, refresh } = useArticle();
 
   // const handleButton = (articleId: number, title: string, content: string) => {
 
@@ -31,7 +31,7 @@ export default function Index() {
 
   useEffect(() => {
     setArticles(articleList);
-  }, []);
+  }, [refresh]);
 
   return (
     <View style={styles.container}>

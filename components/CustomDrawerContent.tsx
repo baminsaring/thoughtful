@@ -19,7 +19,8 @@ export default function CustomDrawerContent(props: any) {
   const router = useRouter();
   const { top, bottom } = useSafeAreaInsets();
 
-  const { user, logout } = useAuth();
+  const { user, logout, refresh } = useAuth();
+  
   const userData = {
     fullName: user?.user_metadata?.full_name ?? "",
     avatarUrl: user?.user_metadata?.avatar_url ?? "",
@@ -33,7 +34,7 @@ export default function CustomDrawerContent(props: any) {
     } else {
       setAvatar(avatarPlaceholder)
     }
-  }, [])
+  }, [refresh])
 
   return (
     <View style={{ flex: 1 }}>

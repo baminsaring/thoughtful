@@ -18,7 +18,7 @@ type Props = {
 export default function RTE({ initialContent, onContentChange, clearContent }: Props) {
 
   const editor = useEditorBridge({
-    autofocus: true,
+    autofocus: false,
     avoidIosKeyboard: true,
     initialContent: initialContent,
     bridgeExtensions: TenTapStartKit,

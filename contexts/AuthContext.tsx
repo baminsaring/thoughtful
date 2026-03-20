@@ -21,6 +21,8 @@ type AuthProps = {
   user: any;
   isLoggedIn: boolean;
   isLoading: boolean;
+  refresh:boolean;
+  setRefresh: (status: boolean) => void;
 };
 
 // Create the Context with a default value (or undefined)
@@ -30,6 +32,7 @@ const AuthContext = createContext<AuthProps | null>(null);
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [refresh, setRefresh] = useState<boolean>(false)
   const [user, setUser] = useState<any>(null);
 
   // Get user data if user is authenticated
@@ -37,7 +40,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     try {
       setIsLoading(true);
       const currentUser = await authService.getUser();
-      //console.log("Current User Data: ", currentUser);
 
       if (currentUser) {
         setIsLoggedIn(true);
@@ -141,7 +143,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     checkUser();
-  }, []);
+
+    if (refresh) setRefresh(false);
+  }, [refresh]);
 
   return (
     <AuthContext.Provider
@@ -153,6 +157,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         logout,
         user,
         isLoading,
+        refresh,
+        setRefresh
       }}
     >
       {children}
