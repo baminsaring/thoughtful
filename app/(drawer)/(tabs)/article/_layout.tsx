@@ -12,16 +12,16 @@ export default function ArticleLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
 
   const router = useRouter();
-  const { article } = useArticle();
+  const { article, setRefresh } = useArticle();
 
   const handleIconClick = async (selectedItem: string) => {
     const articleId = article.id
     const { success } = await postService.deleteArticle(articleId)
-    //console.log("Layout: ", selectedItem, "Id: ", articleId);
 
     if (!success) throw new Error("Unable to delete the article!");
 
     if (success) Alert.alert("Article deleted successfully!")
+      setRefresh(true);
       router.back();
   }
 

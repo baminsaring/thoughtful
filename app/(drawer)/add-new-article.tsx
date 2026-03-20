@@ -1,24 +1,37 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Alert } from "react-native";
 
 import RTE from "@/components/RTE";
 import InputBox from "@/components/InputBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import postService from "@/lib/postService";
 import { useAuth } from "@/contexts/AuthContext";
+import { useArticle } from "@/contexts/ArticeContext";
 
 export default function AddNewArticle() {
   const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>('');
+  const [content, setContent] = useState<string>("");
 
+  const { refresh, setRefresh } = useArticle();
   const { user } = useAuth();
   const user_id = user?.id ?? "";
 
   const handleSave = async() => {
     if (title.trim() && content.trim()) {
-      await postService.uploadArticle(title, content, user_id)
+      const { success } =await postService.uploadArticle(title, content, user_id)
+
+      if (success) {
+        Alert.alert("Article created!");
+        setRefresh(true);
+        setTitle("");
+        setContent("");
+      }
     }
   }
+
+  useEffect(() => {
+    setContent("");
+  }, [refresh])
 
   return (
     <View style={styles.container}>
@@ -34,7 +47,7 @@ export default function AddNewArticle() {
       <View style={styles.contentContainer}>
         <Text>Content</Text>
 
-        <RTE initialContent={content} onContentChange={setContent} />
+        <RTE initialContent={content} onContentChange={setContent} clearContent={refresh}/>
       </View>
 
       <Button label="Create" onClick={handleSave} />
