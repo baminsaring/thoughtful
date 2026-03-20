@@ -4,8 +4,7 @@ import {
   Text,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
-  Button,
+  StyleSheet
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RichText, Toolbar, useEditorBridge, TenTapStartKit } from "@10play/tentap-editor";
@@ -35,9 +34,7 @@ export default function RTE({ initialContent, onContentChange }: Props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <RichText 
-        editor={editor}
-      />
+      <RichText editor={editor} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
@@ -51,8 +48,8 @@ export default function RTE({ initialContent, onContentChange }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 0,
-    height: 300,
-    borderWidth: 1,
+    height: 400,
+    borderWidth: 1
   },
   keyboardAvoidingView: {
     position: "absolute",

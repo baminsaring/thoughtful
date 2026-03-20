@@ -33,6 +33,7 @@ export default function AddNewArticle() {
 
       <View style={styles.contentContainer}>
         <Text>Content</Text>
+
         <RTE initialContent={content} onContentChange={setContent} />
       </View>
 
