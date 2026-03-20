@@ -18,9 +18,11 @@ export type ArticleType = {
 
 type ArticleProps = {
   isLoading: boolean;
+  refresh: boolean;
+  setRefresh: ( status: boolean) => void;
   article: any;
   articleList: any[];
-  setArticle: ({ id, title, content, userFullName, userAvatarUrl }: ArticleType) => void
+  setArticle: ({ id, title, content, userFullName, userAvatarUrl }: ArticleType) => void;
 };
 
 const ArticleContext = createContext<ArticleProps | null>(null);
@@ -29,6 +31,7 @@ export default function ArticleProvider({ children }: PropsWithChildren) {
   const [article, setArticle] = useState<ArticleType>();
   const [articleList, setArticleList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [refresh, setRefresh] = useState<boolean>(false)
 
   const getArticles = async () => {
     setIsLoading(true);
@@ -48,12 +51,16 @@ export default function ArticleProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     getArticles();
-  }, []);
+
+    if (refresh) setRefresh(false);
+  }, [refresh]);
 
   return (
     <ArticleContext.Provider
       value={{
         isLoading,
+        refresh,
+        setRefresh,
         article,
         articleList,
         setArticle

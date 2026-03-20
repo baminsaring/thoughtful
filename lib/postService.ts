@@ -30,18 +30,21 @@ const postService = {
 
     async uploadArticle(title: string, content: string, userId: number) {
         try {
-            const { data, error } = await supabase
+            const response = await supabase
             .from(TABLE_NAME)
             .insert({
                 title: title,
                 content: content,
                 user_id: userId
             })
+            //console.log("Upload post: ", response.status);
+            if (response.status != 201) return { success: false }
 
-            console.log("Upload post: ", data);
+            return { success: true }
         } catch (error: any) {
+            console.log("postService :: error: Failed to upload article!")
             return {
-                error: error.messge || "Failed to create post"
+                success: false
             }
         }
     },
@@ -64,16 +67,12 @@ const postService = {
 
     async deleteArticle(articleId: number) {
         try {
-
-            console.log("Article id delete:", articleId)
-
             const response = await supabase
             .from(TABLE_NAME)
             .delete()
             .eq('id', articleId)
-            
-            console.log("Delete response: ", response)
-            if (!response) {
+
+            if (response.status != 204) {
                 console.log("postService::Error: Unable to delete post!")
                 return {
                     success: false

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,9 +12,10 @@ import { RichText, Toolbar, useEditorBridge, TenTapStartKit } from "@10play/tent
 type Props = {
   initialContent: string;
   onContentChange: (content: string) => void;
+  clearContent: boolean;
 }
 
-export default function RTE({ initialContent, onContentChange }: Props) {
+export default function RTE({ initialContent, onContentChange, clearContent }: Props) {
 
   const editor = useEditorBridge({
     autofocus: true,
@@ -31,6 +32,14 @@ export default function RTE({ initialContent, onContentChange }: Props) {
     const htmlContent = await editor.getHTML();
     onContentChange(htmlContent);
   }
+
+  const clearContentData = () => {
+    editor.setContent('');
+  }
+
+  useEffect(() => {
+    if (clearContent) clearContentData();
+  }, [clearContent])
 
   return (
     <SafeAreaView style={styles.container}>
