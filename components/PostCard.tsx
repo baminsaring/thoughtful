@@ -5,7 +5,7 @@ import { useWindowDimensions } from "react-native";
 import RenderHtml from "react-native-render-html";
 import { useRouter } from "expo-router";
 import profileService from "@/lib/profileService";
-
+import { useAuth } from "@/contexts/AuthContext";
 import { useArticle } from "@/contexts/ArticeContext";
 import { ArticleType } from "@/contexts/ArticeContext";
 
@@ -37,11 +37,20 @@ export function PostCard({
   const MAX_CHARS = 250;
   const { width } = useWindowDimensions();
 
+  const { user } = useAuth();
   const { setArticle } = useArticle();
 
   const source = {
     html: content,
   };
+
+  /** Check is authenticated user is the creator of this article
+   * If yes return true else false
+  **/
+  const checkIsArticleEditable = () => {
+    const user_id = user?.id
+    return user_id == userId ? true : false;
+  }
 
   const getUserData = async () => {
     try {
@@ -62,13 +71,15 @@ export function PostCard({
 
   const handleClick = () => {
     const article: ArticleType = {
-      articleId: articleId,
+      id: articleId,
       title: title,
       content: content,
       coverUrl: coverImgUrl,
+      isEditable: checkIsArticleEditable(),
       userFullName: userInfo?.fullName!,
       userAvatarUrl: userInfo?.avatarUrl!,
     };
+
     setArticle(article);
     router.push("/(drawer)/(tabs)/article");
   };

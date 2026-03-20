@@ -6,12 +6,9 @@ import {
   StyleSheet,
 } from "react-native";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { useArticle } from "@/contexts/ArticeContext";
 
-import { SearchBar } from "@/components/SearchBar";
 import { PostCard } from "@/components/PostCard";
 import CircularProgress from "@/components/ProgressBar";
 
@@ -56,6 +53,7 @@ export default function Index() {
                   userId={item.user_id}
                 />
             )}
+            showsVerticalScrollIndicator={false}
           />
         </View>
       )}

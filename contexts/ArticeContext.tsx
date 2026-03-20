@@ -8,19 +8,20 @@ import {
 import postService from "@/lib/postService";
 
 export type ArticleType = {
-    articleId: number;
+    id: number;
     title: string;
     content: string;
     coverUrl: string;
-    userFullName: string,
-    userAvatarUrl: string,
+    isEditable: boolean;
+    userFullName: string;
+    userAvatarUrl: string;
 }
 
 type ArticleProps = {
   isLoading: boolean;
   article: any;
   articleList: any[];
-  setArticle: ({ articleId, title, content, coverUrl, userFullName, userAvatarUrl }: ArticleType) => void
+  setArticle: ({ id, title, content, coverUrl, userFullName, userAvatarUrl }: ArticleType) => void
 };
 
 const ArticleContext = createContext<ArticleProps | null>(null);

@@ -6,6 +6,7 @@ import { useWindowDimensions } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useArticle } from "@/contexts/ArticeContext";
 import profileService from "@/lib/profileService";
+import DropdownMenu from "@/components/DropdownMenu";
 
 export default function Article() {
 
@@ -42,7 +43,8 @@ export default function Article() {
       />
 
       {/* Comment Section */}
-      <View></View>
+      <View>
+      </View>
     </View>
   );
 }

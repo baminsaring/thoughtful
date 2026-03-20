@@ -62,15 +62,30 @@ const postService = {
         }
     },
 
-    async deleteArticle(postId: number) {
+    async deleteArticle(articleId: number) {
         try {
-            const { data, error } = await supabase
+
+            console.log("Article id delete:", articleId)
+
+            const response = await supabase
             .from(TABLE_NAME)
             .delete()
-            .eq('id', postId)
+            .eq('id', articleId)
+            
+            console.log("Delete response: ", response)
+            if (!response) {
+                console.log("postService::Error: Unable to delete post!")
+                return {
+                    success: false
+                }
+            }
+
+            return {
+                success: true
+            }
         } catch (error: any) {
             return {
-                error: error.message || "Unable to delete post!"
+                success: false
             }
         }
     }
