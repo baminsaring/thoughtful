@@ -3,13 +3,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 import { Text, Pressable, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import ArticleProvider from "@/contexts/ArticeContext";
 
 export default function Layout() {
   const router = useRouter();
 
   return (
-    <ArticleProvider>
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: "black",
@@ -112,6 +110,5 @@ export default function Layout() {
           }}
         />
       </Tabs>
-    </ArticleProvider>
   );
 }

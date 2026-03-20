@@ -49,7 +49,6 @@ export default function Index() {
                   articleId={item.id}
                   title={item.title}
                   content={item.content}
-                  coverImgUrl={item.cover_img_url}
                   userId={item.user_id}
                 />
             )}

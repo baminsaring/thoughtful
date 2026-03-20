@@ -1,9 +1,11 @@
 import { Drawer } from "expo-router/drawer";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomDrawerContent from "@/components/CustomDrawerContent";
+import ArticleProvider from "@/contexts/ArticeContext";
 
 export default function DrawerLayout() {
   return (
+    <ArticleProvider>
     <Drawer
       drawerContent={CustomDrawerContent}
       screenOptions={{
@@ -35,10 +37,10 @@ export default function DrawerLayout() {
         }}
       />
       <Drawer.Screen
-        name="your-articles"
+        name="my-articles"
         options={{
-          drawerLabel: "Your articles",
-          title: "Your articles",
+          drawerLabel: "My Articles",
+          title: "My Articles",
           drawerIcon: ({ size, color }) => (
             <Ionicons name="newspaper-outline" size={size} color={color} />
           ),
@@ -46,5 +48,6 @@ export default function DrawerLayout() {
       />
       
     </Drawer>
+    </ArticleProvider>
   );
 }
