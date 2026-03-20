@@ -15,7 +15,6 @@ type Props = {
   articleId: number;
   title: string;
   content: string;
-  coverImgUrl: string;
   userId: number;
 };
 
@@ -28,7 +27,6 @@ export function PostCard({
   articleId,
   title,
   content,
-  coverImgUrl,
   userId,
 }: Props) {
   const [userInfo, setUserInfo] = useState<UserType>();
@@ -74,7 +72,6 @@ export function PostCard({
       id: articleId,
       title: title,
       content: content,
-      coverUrl: coverImgUrl,
       isEditable: checkIsArticleEditable(),
       userFullName: userInfo?.fullName!,
       userAvatarUrl: userInfo?.avatarUrl!,

@@ -11,7 +11,6 @@ export type ArticleType = {
     id: number;
     title: string;
     content: string;
-    coverUrl: string;
     isEditable: boolean;
     userFullName: string;
     userAvatarUrl: string;
@@ -21,7 +20,7 @@ type ArticleProps = {
   isLoading: boolean;
   article: any;
   articleList: any[];
-  setArticle: ({ id, title, content, coverUrl, userFullName, userAvatarUrl }: ArticleType) => void
+  setArticle: ({ id, title, content, userFullName, userAvatarUrl }: ArticleType) => void
 };
 
 const ArticleContext = createContext<ArticleProps | null>(null);
