@@ -16,7 +16,7 @@ export default function AddNewArticle() {
   const { user } = useAuth();
   const user_id = user?.id ?? "";
 
-  const handleSave = async() => {
+  const handlePublish = async() => {
     if (title.trim() && content.trim()) {
       const { success } =await postService.uploadArticle(title, content, user_id)
 
@@ -50,7 +50,7 @@ export default function AddNewArticle() {
         <RTE initialContent={content} onContentChange={setContent} clearContent={refresh}/>
       </View>
 
-      <Button label="Create" onClick={handleSave} />
+      <Button label="Publish" onClick={handlePublish} />
     </View>
   );
 }
