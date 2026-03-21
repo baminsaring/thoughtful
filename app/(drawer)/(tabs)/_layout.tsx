@@ -49,7 +49,7 @@ export default function Layout() {
           }}
         />
         <Tabs.Screen
-          name="search_screen"
+          name="search"
           options={{
             title: "Search",
             tabBarIcon: ({ color, focused }) => (
@@ -62,7 +62,7 @@ export default function Layout() {
           }}
         />
         <Tabs.Screen
-          name="bookmarks_screen"
+          name="bookmarks"
           options={{
             title: "Bookmarks",
             tabBarIcon: ({ color, focused }) => (
@@ -75,7 +75,7 @@ export default function Layout() {
           }}
         />
         <Tabs.Screen
-          name="setting_screen"
+          name="setting"
           options={{
             title: "Setting",
             tabBarIcon: ({ color, focused }) => (

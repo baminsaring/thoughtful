@@ -7,20 +7,25 @@ import {
   View,
 } from "react-native";
 
-export function SearchBar() {
-  const [searchText, setSearchText] = useState<string>("");
+type Props = {
+  searchText: string;
+  setSearchText: ( text: string ) => void;
+  onClick: () => void;
+}
+
+export function SearchBar({ searchText, setSearchText, onClick }: Props) {
 
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={{ height: 40, width: '80%', borderRadius: 10, borderWidth: 0.5, paddingLeft: 10 }}
         onChangeText={setSearchText}
         value={searchText}
         placeholder="Search..."
         placeholderTextColor="gray"
         autoFocus
       />
-      <TouchableOpacity style={styles.searchButton}>
+      <TouchableOpacity style={styles.searchButton} onPress={ onClick }>
         <Text style={styles.searchButtonText}>Search</Text>
       </TouchableOpacity>
     </View>
@@ -32,7 +37,7 @@ const styles = StyleSheet.create({
     flex: 0,
     flexDirection: "row",
     width: "100%",
-    marginVertical: 20,
+    marginVertical: 10,
     justifyContent: 'center',
     gap: 5,
   },
@@ -44,14 +49,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
-    borderWidth: 1,
+    borderWidth: 0.5,
   },
   searchButton: {
-    flex: 1,
     height: 40,
     width: '20%',
     justifyContent: 'center',
-    backgroundColor: '#5263df',
+    backgroundColor: '#0a0a0a',
     borderRadius: 10,
   },
   searchButtonText: {
