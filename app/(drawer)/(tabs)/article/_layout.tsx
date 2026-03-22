@@ -1,29 +1,97 @@
-import { Stack } from "expo-router";
+import { Stack, useFocusEffect } from "expo-router";
 import { useRouter } from "expo-router";
 import { View, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useArticle } from "@/contexts/ArticeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import postService from "@/lib/postService";
 
 import DropdownMenu from "@/components/DropdownMenu";
+import profileService from "@/lib/profileService";
 
 export default function ArticleLayout() {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
+  const [bookmarksArr, setBookmarksArr] = useState<number[]>([]);
+  const [isBookmark, setIsBookmark] = useState<boolean>(false);
 
   const router = useRouter();
+  const { user } = useAuth();
   const { article, setRefresh } = useArticle();
 
+  const checkIsBookmarked = async () => {
+    try {
+      const response = await profileService.checkIsAlreadyExist(
+        article.id,
+        user.id,
+      );
+      console.log("Article ID: ", article.id);
+      console.log("Response: ", response);
+      console.log("--------------------------");
+
+      if (response) {
+        setIsBookmark(true);
+      } else {
+        setIsBookmark(false);
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  };
+
+  const getBookmarks = async () => {
+    try {
+      const response = await profileService.getBookmarks(user.id);
+      setBookmarksArr(response?.bookmarks || []);
+    } catch (error) {
+      console.log("getBookmarks :: error : ", error);
+    }
+  };
+
+  const handleBookmarkIconClick = async () => {
+    let newBookmarksArr = isBookmark
+      ? bookmarksArr.filter((id) => id !== article.id)
+      : [...bookmarksArr, article.id];
+
+    try {
+      await profileService.insertBookmark(user.id, newBookmarksArr);
+      setIsBookmark(!isBookmark);
+    } catch (error) {
+      console.log("Failed to update bookmark:", error);
+      setBookmarksArr(bookmarksArr);
+      setIsBookmark(isBookmark);
+    }
+  };
+
   const handleIconClick = async (selectedItem: string) => {
-    const articleId = article.id
-    const { success } = await postService.deleteArticle(articleId)
+    const { success } = await postService.deleteArticle(article.id);
 
-    if (!success) throw new Error("Unable to delete the article!");
+    if (!success) {
+      Alert.alert("Error", "Unable to delete the article!");
+      return;
+    }
 
-    if (success) Alert.alert("Article deleted successfully!")
-      setRefresh(true);
-      router.back();
-  }
+    Alert.alert("Success", "Article deleted successfully!");
+    setRefresh(true);
+    router.back();
+  };
+
+   // Re-fetch data when screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      getBookmarks();
+    }, [user.id])
+  );
+
+  // Update bookmark status whenever bookmarksArr or article.id changes
+  useFocusEffect(
+    useCallback(() => {
+      if (article.id && bookmarksArr.length > 0) {
+        setIsBookmark(bookmarksArr.includes(article.id));
+      } else {
+        setIsBookmark(false);
+      }
+    }, [bookmarksArr, article.id])
+  );
 
   return (
     <Stack
@@ -35,11 +103,16 @@ export default function ArticleLayout() {
           </TouchableOpacity>
         ),
         headerRight: () => (
-          // Dropdown Menu
           <View style={styles.iconContainer}>
             {/* Bookmark Icon */}
-            <TouchableOpacity style={{ padding: 10 }} onPress={() => {}}>
-              <Ionicons name="bookmark-outline" size={24} />
+            <TouchableOpacity
+              style={{ padding: 10 }}
+              onPress={handleBookmarkIconClick}
+            >
+              <Ionicons
+                name={isBookmark ? "bookmark" : "bookmark-outline"}
+                size={24}
+              />
             </TouchableOpacity>
 
             {/* Dropdown Menu Icon */}

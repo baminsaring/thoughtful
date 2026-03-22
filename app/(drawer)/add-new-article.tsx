@@ -21,7 +21,7 @@ export default function AddNewArticle() {
       const { success } =await postService.uploadArticle(title, content, user_id)
 
       if (success) {
-        Alert.alert("Article created!");
+        Alert.alert("Article published!");
         setRefresh(true);
         setTitle("");
         setContent("");

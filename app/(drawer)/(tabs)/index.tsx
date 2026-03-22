@@ -49,7 +49,7 @@ export default function Index() {
                   articleId={item.id}
                   title={item.title}
                   content={item.content}
-                  userId={item.user_id}
+                  articleUserId={item.user_id}
                 />
             )}
             showsVerticalScrollIndicator={false}
