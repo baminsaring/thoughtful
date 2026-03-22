@@ -4,10 +4,10 @@ import { Image } from "expo-image";
 import { useWindowDimensions } from "react-native";
 import RenderHtml from "react-native-render-html";
 import { useRouter } from "expo-router";
-import profileService from "@/lib/profileService";
 import { useAuth } from "@/contexts/AuthContext";
 import { useArticle } from "@/contexts/ArticeContext";
 import { ArticleType } from "@/contexts/ArticeContext";
+import profileService from "@/lib/profileService";
 
 //import user from "@/assets/images/person_placeholder.png";
 
@@ -15,7 +15,7 @@ type Props = {
   articleId: number;
   title: string;
   content: string;
-  userId: number;
+  articleUserId: number;
 };
 
 type UserType = {
@@ -27,9 +27,10 @@ export function PostCard({
   articleId,
   title,
   content,
-  userId,
+  articleUserId,
 }: Props) {
   const [userInfo, setUserInfo] = useState<UserType>();
+  const [isBookmark, setIsBookmark] = useState<boolean>(false);
 
   const router = useRouter();
   const MAX_CHARS = 250;
@@ -47,12 +48,15 @@ export function PostCard({
   **/
   const checkIsArticleEditable = () => {
     const user_id = user?.id
-    return user_id == userId ? true : false;
+    return user_id == articleUserId ? true : false;
   }
 
+  /*** 
+   *Get the data like full name and avatar url of user who wrote this article 
+   ***/
   const getUserData = async () => {
     try {
-      const { data, error } = await profileService.getUserData(userId);
+      const { data, error } = await profileService.getUserData(articleUserId);
 
       if (data) {
         const userData: UserType = {
@@ -66,8 +70,32 @@ export function PostCard({
       console.log("getUserData :: error: ", error);
     }
   };
+  
+  /***
+   * Check whether a user has bookmark this article
+   * If yes setIsBookmark(true) else setIsBookmark(false)
+  ***/
+  const checkIsBookmarked = async () => {
+    try {
+      const response = await profileService.checkIsAlreadyExist(articleId, user?.id)
 
-  const handleClick = () => {
+      if (response) {
+        setIsBookmark(true);
+      } else {
+        setIsBookmark(false);
+      }
+    } catch (error) {
+      console.log("PostCard :: checkIsBookmarked :: Error: ", error);
+      
+    }
+  }
+
+  /**
+   * When user a user press on the Read more button
+   * This will first create an object of type article
+   * Then it will assign the article type data in the setArticle ArticleProvider that it will available for all the routes
+   */
+  const handlePress = () => {
     const article: ArticleType = {
       id: articleId,
       title: title,
@@ -83,7 +111,8 @@ export function PostCard({
 
   useEffect(() => {
     getUserData();
-  }, []);
+    checkIsBookmarked();
+  }, [isBookmark]);
 
   return (
     <View style={styles.container}>
@@ -111,7 +140,7 @@ export function PostCard({
 
       {/* Button */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleClick}>
+        <TouchableOpacity style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>Read more</Text>
         </TouchableOpacity>
       </View>
