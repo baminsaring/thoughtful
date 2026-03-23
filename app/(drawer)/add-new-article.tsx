@@ -2,23 +2,37 @@ import { StyleSheet, Text, View, Alert } from "react-native";
 
 import RTE from "@/components/RTE";
 import InputBox from "@/components/InputBox";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Button from "@/components/Button";
 import postService from "@/lib/postService";
 import { useAuth } from "@/contexts/AuthContext";
 import { useArticle } from "@/contexts/ArticeContext";
+import {
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter
+} from "expo-router";
 
 export default function AddNewArticle() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
+  const router = useRouter();
+  const navigation = useNavigation();
+  const { headerTitle } = useLocalSearchParams();
+
   const { refresh, setRefresh } = useArticle();
   const { user } = useAuth();
   const user_id = user?.id ?? "";
 
-  const handlePublish = async() => {
+  const handlePublish = async () => {
     if (title.trim() && content.trim()) {
-      const { success } =await postService.uploadArticle(title, content, user_id)
+      const { success } = await postService.uploadArticle(
+        title,
+        content,
+        user_id,
+      );
 
       if (success) {
         Alert.alert("Article published!");
@@ -27,15 +41,23 @@ export default function AddNewArticle() {
         setContent("");
       }
     }
-  }
+  };
 
-  useEffect(() => {
-    setContent("");
-  }, [refresh])
+  useFocusEffect(
+    useCallback(() => {
+      setContent("");
+      // navigation.setOptions({
+      //   title: headerTitle,
+      // });
+      
+    }, [refresh]),
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Create Article</Text>
+      <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+        {headerTitle ? "Edit Article" : "Create Article"}
+      </Text>
 
       <InputBox
         label="Title"
@@ -47,10 +69,17 @@ export default function AddNewArticle() {
       <View style={styles.contentContainer}>
         <Text>Content</Text>
 
-        <RTE initialContent={content} onContentChange={setContent} clearContent={refresh}/>
+        <RTE
+          initialContent={content}
+          onContentChange={setContent}
+          clearContent={refresh}
+        />
       </View>
 
-      <Button label="Publish" onClick={handlePublish} />
+      <Button
+        label={headerTitle ? "Update" : "Publish"}
+        onClick={handlePublish}
+      />
     </View>
   );
 }
@@ -66,5 +95,5 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 5,
     marginVertical: 10,
-  }
+  },
 });

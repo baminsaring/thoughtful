@@ -8,24 +8,24 @@ type DropdownItemType = {
   icon: string;
 };
 
-const menuData: DropdownItemType[] = [
+type Prop = {
+  onEditIconClick: () => void;
+  onDeleteIconClick: () => void;
+}
+
+export default function DropdownMenu({ onEditIconClick, onDeleteIconClick}: Prop) {
+
+  const menuData: DropdownItemType[] = [
   { title: "Edit", icon: "pencil-outline" },
   { title: "Delete", icon: "trash-outline" },
 ];
-
-type Prop = {
-  onPressIcon: (selectedItem: string) => void
-}
-
-export default function DropdownMenu({ onPressIcon}: Prop) {
 
   return (
     <View>
       <SelectDropdown
         data={menuData}
         onSelect={(selectedItem, index) => {
-            //console.log(selectedItem, index);
-            onPressIcon(selectedItem.title);
+          selectedItem.title === "Edit" ? onEditIconClick() : onDeleteIconClick();
         }}
         renderButton={(selectedItem, isOpened) => {
           return (

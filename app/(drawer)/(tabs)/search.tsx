@@ -9,7 +9,7 @@ export default function Search() {
   const [filterArticles, setFilterArticles] = useState<any[]>([]);
   const [searchText, setSearchText] = useState<string>("");
 
-  const { articleList } = useArticle();
+  const { articleList, refresh } = useArticle();
 
   const handleSearch = () => {
     const filterData = filterArticles.filter((item) => item.title.toLowerCase() === searchText.toLowerCase());
@@ -18,7 +18,7 @@ export default function Search() {
 
   useEffect(() => {
     setFilterArticles(articleList);
-  }, [searchText]);
+  }, [searchText, refresh]);
 
   return (
     <View style={styles.searchContainer}>

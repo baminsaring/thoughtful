@@ -1,5 +1,5 @@
 import { Stack, useFocusEffect } from "expo-router";
-import { useRouter } from "expo-router";
+import { useRouter, usePathname } from "expo-router";
 import { View, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useCallback, useEffect, useState } from "react";
@@ -17,25 +17,6 @@ export default function ArticleLayout() {
   const { user } = useAuth();
   const { article, refresh, setRefresh, bookmarksId, setBookmarksId } = useArticle();
 
-  const checkIsBookmarked = async () => {
-    try {
-      const response = await profileService.checkIsAlreadyExist(
-        article.id,
-        user.id,
-      );
-      // console.log("Article ID: ", article.id);
-      // console.log("Response: ", response);
-      // console.log("--------------------------");
-
-      if (response) {
-        setIsBookmark(true);
-      } else {
-        setIsBookmark(false);
-      }
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
 
   const handleBookmarkIconClick = async () => {
     let newBookmarksArr = isBookmark
@@ -53,7 +34,14 @@ export default function ArticleLayout() {
     }
   };
 
-  const handleIconClick = async (selectedItem: string) => {
+  const handleEditIconClick = async () => {
+    router.replace({
+      pathname: "/(drawer)/add-new-article",
+      params: { headerTitle: "Edit Article" }
+    });
+  }
+
+  const handleDeleteIconClick = async () => {
     const { success } = await postService.deleteArticle(article.id);
 
     if (!success) {
@@ -102,7 +90,10 @@ export default function ArticleLayout() {
 
             {/* Dropdown Menu Icon */}
             {article.isEditable ? (
-              <DropdownMenu onPressIcon={handleIconClick} />
+              <DropdownMenu 
+              onEditIconClick={handleEditIconClick}
+              onDeleteIconClick={handleDeleteIconClick} 
+              />
             ) : null}
           </View>
         ),
