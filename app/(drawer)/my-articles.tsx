@@ -43,7 +43,7 @@ export default function my_articles() {
             articleId={item.id}
             title={item.title}
             content={item.content}
-            articleUserId={item.user_id}
+            authorId={item.author_id}
           />
         )}
       />

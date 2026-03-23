@@ -35,7 +35,7 @@ export default function Search() {
             articleId={item.id}
             title={item.title}
             content={item.content}
-            userId={item.user_id}
+            authorId={item.author_id}
           />
         )}
         showsVerticalScrollIndicator={false}

@@ -11,12 +11,11 @@ import DropdownMenu from "@/components/DropdownMenu";
 import profileService from "@/lib/profileService";
 
 export default function ArticleLayout() {
-  const [bookmarksArr, setBookmarksArr] = useState<number[]>([]);
   const [isBookmark, setIsBookmark] = useState<boolean>(false);
 
   const router = useRouter();
   const { user } = useAuth();
-  const { article, setRefresh } = useArticle();
+  const { article, refresh, setRefresh, bookmarksId, setBookmarksId } = useArticle();
 
   const checkIsBookmarked = async () => {
     try {
@@ -24,9 +23,9 @@ export default function ArticleLayout() {
         article.id,
         user.id,
       );
-      console.log("Article ID: ", article.id);
-      console.log("Response: ", response);
-      console.log("--------------------------");
+      // console.log("Article ID: ", article.id);
+      // console.log("Response: ", response);
+      // console.log("--------------------------");
 
       if (response) {
         setIsBookmark(true);
@@ -38,26 +37,18 @@ export default function ArticleLayout() {
     }
   };
 
-  const getBookmarks = async () => {
-    try {
-      const response = await profileService.getBookmarks(user.id);
-      setBookmarksArr(response?.bookmarks || []);
-    } catch (error) {
-      console.log("getBookmarks :: error : ", error);
-    }
-  };
-
   const handleBookmarkIconClick = async () => {
     let newBookmarksArr = isBookmark
-      ? bookmarksArr.filter((id) => id !== article.id)
-      : [...bookmarksArr, article.id];
+      ? bookmarksId.filter((id) => id !== article.id)
+      : [...bookmarksId, article.id];
 
     try {
       await profileService.insertBookmark(user.id, newBookmarksArr);
       setIsBookmark(!isBookmark);
+      setRefresh(true);
     } catch (error) {
       console.log("Failed to update bookmark:", error);
-      setBookmarksArr(bookmarksArr);
+      setBookmarksId(bookmarksId);
       setIsBookmark(isBookmark);
     }
   };
@@ -76,21 +67,15 @@ export default function ArticleLayout() {
   };
 
    // Re-fetch data when screen gains focus
-  useFocusEffect(
-    useCallback(() => {
-      getBookmarks();
-    }, [user.id])
-  );
-
   // Update bookmark status whenever bookmarksArr or article.id changes
   useFocusEffect(
     useCallback(() => {
-      if (article.id && bookmarksArr.length > 0) {
-        setIsBookmark(bookmarksArr.includes(article.id));
+      if (article.id && bookmarksId.length > 0) {
+        setIsBookmark(bookmarksId.includes(article.id));
       } else {
         setIsBookmark(false);
       }
-    }, [bookmarksArr, article.id])
+    }, [bookmarksId, article.id])
   );
 
   return (
