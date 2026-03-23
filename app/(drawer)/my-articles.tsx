@@ -13,7 +13,7 @@ export default function my_articles() {
   const { user } = useAuth()
 
   const filterArticles = () => {
-    const filterData = articleList.filter(item => item.user_id === user.id)
+    const filterData = articleList.filter(item => item.author_id === user.id)
     setMyArticles(filterData);
   }
 

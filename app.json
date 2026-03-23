@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "thoughtful",
+    "name": "Thoughtful",
     "slug": "thoughtful",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/thoughtful_icon.png",
     "scheme": "thoughtful",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
