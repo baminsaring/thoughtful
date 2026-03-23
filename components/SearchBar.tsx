@@ -23,7 +23,6 @@ export function SearchBar({ searchText, setSearchText, onClick }: Props) {
         value={searchText}
         placeholder="Search..."
         placeholderTextColor="gray"
-        autoFocus
       />
       <TouchableOpacity style={styles.searchButton} onPress={ onClick }>
         <Text style={styles.searchButtonText}>Search</Text>

@@ -15,7 +15,7 @@ type Props = {
   articleId: number;
   title: string;
   content: string;
-  articleUserId: number;
+  authorId: number;
 };
 
 type UserType = {
@@ -27,7 +27,7 @@ export function PostCard({
   articleId,
   title,
   content,
-  articleUserId,
+  authorId,
 }: Props) {
   const [userInfo, setUserInfo] = useState<UserType>();
   const [isBookmark, setIsBookmark] = useState<boolean>(false);
@@ -48,7 +48,7 @@ export function PostCard({
   **/
   const checkIsArticleEditable = () => {
     const user_id = user?.id
-    return user_id == articleUserId ? true : false;
+    return user_id == authorId ? true : false;
   }
 
   /*** 
@@ -56,7 +56,7 @@ export function PostCard({
    ***/
   const getUserData = async () => {
     try {
-      const { data, error } = await profileService.getUserData(articleUserId);
+      const { data, error } = await profileService.getUserData(authorId);
 
       if (data) {
         const userData: UserType = {

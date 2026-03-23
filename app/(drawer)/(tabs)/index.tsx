@@ -17,17 +17,9 @@ export default function Index() {
   //const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const router = useRouter();
-  const { articleList, isLoading, refresh } = useArticle();
+  const { articleList, isLoading, refresh, setBookmarksId } = useArticle();
 
-  // const handleButton = (articleId: number, title: string, content: string) => {
-
-  //   router.push({
-  //     pathname: "/(drawer)/(tabs)/article",
-  //     params: { 
-  //       postId: '1', title: `${title}`, content: `${content}` 
-  //     }
-  //   });
-  // };
+  
 
   useEffect(() => {
     setArticles(articleList);
@@ -49,7 +41,7 @@ export default function Index() {
                   articleId={item.id}
                   title={item.title}
                   content={item.content}
-                  articleUserId={item.user_id}
+                  authorId={item.author_id}
                 />
             )}
             showsVerticalScrollIndicator={false}

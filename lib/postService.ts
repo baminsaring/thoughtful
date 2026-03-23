@@ -5,8 +5,19 @@ const TABLE_NAME = "posts";
 
 const postService = {
 
-    async getArticle() {
+    async getArticlesById(articleIdArr: number[]) {
+        try {
+            const {data, error} = await supabase
+            .from(TABLE_NAME)
+            .select()
+            .in('id', articleIdArr) 
 
+            //console.log("Article Arr Data: ", data);
+            
+            return data;
+        } catch (error) {
+            console.log("postArticle Error: Unable to get articles by id!");
+        }
     },
 
     async getArticles() {
@@ -35,7 +46,7 @@ const postService = {
             .insert({
                 title: title,
                 content: content,
-                user_id: userId
+                author_id: userId
             })
             //console.log("Upload post: ", response.status);
             if (response.status != 201) return { success: false }
@@ -49,12 +60,12 @@ const postService = {
         }
     },
 
-    async updateArticle(postId: number ,title: string, content: string, coverImageUrl: string) {
+    async updateArticle(articleId: number ,title: string, content: string) {
         try {
             const { data, error } = await supabase
             .from(TABLE_NAME)
-            .update({ title, content, coverImageUrl })
-            .eq('id', postId)
+            .update({ title, content})
+            .eq('id', articleId)
             .select()
 
             return data;
