@@ -3,9 +3,10 @@ import { useRouter, usePathname } from "expo-router";
 import { View, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useCallback, useEffect, useState } from "react";
+import postService from "@/lib/postService";
 import { useArticle } from "@/contexts/ArticeContext";
 import { useAuth } from "@/contexts/AuthContext";
-import postService from "@/lib/postService";
+import { useRoute } from "@/contexts/RouteContext";
 
 import DropdownMenu from "@/components/DropdownMenu";
 import profileService from "@/lib/profileService";
@@ -14,8 +15,10 @@ export default function ArticleLayout() {
   const [isBookmark, setIsBookmark] = useState<boolean>(false);
 
   const router = useRouter();
+
   const { user } = useAuth();
   const { article, refresh, setRefresh, bookmarksId, setBookmarksId } = useArticle();
+  const { setIsEditScreen } = useRoute();
 
 
   const handleBookmarkIconClick = async () => {
@@ -35,10 +38,8 @@ export default function ArticleLayout() {
   };
 
   const handleEditIconClick = async () => {
-    router.replace({
-      pathname: "/(drawer)/add-new-article",
-      params: { headerTitle: "Edit Article" }
-    });
+    setIsEditScreen(true);
+    router.replace("/(drawer)/add-new-article");
   }
 
   const handleDeleteIconClick = async () => {
