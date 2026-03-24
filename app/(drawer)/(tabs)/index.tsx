@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { useArticle } from "@/contexts/ArticeContext";
+import Toast from "react-native-toast-message";
 
 import { PostCard } from "@/components/PostCard";
 import CircularProgress from "@/components/ProgressBar";
@@ -17,9 +18,8 @@ export default function Index() {
   //const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const router = useRouter();
-  const { articleList, isLoading, refresh, setBookmarksId } = useArticle();
+  const { articleList, isLoading, refresh } = useArticle();
 
-  
 
   useEffect(() => {
     setArticles(articleList);
@@ -29,7 +29,7 @@ export default function Index() {
     <View style={styles.container}>
       {isLoading ? (
         <View style={styles.progressBarOverlay}>
-          <CircularProgress />
+          <CircularProgress color="blue" size={80}/>
         </View>
       ) : (
         <View>

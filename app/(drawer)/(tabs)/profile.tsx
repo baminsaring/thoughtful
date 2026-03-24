@@ -14,11 +14,35 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import storageService from "@/lib/storageService";
 
+import ProgressBar from "@/components/ProgressBar";
 import PicturePickerButton from "@/components/PicturePickerButton";
 import AvatarPickerModal from "@/components/AvatarPickerModal";
 import avatarPlaceholder from "@/assets/images/avatar.png";
+import Toast, { BaseToast, ToastConfig } from "react-native-toast-message";
 
 const BUCKET_NAME = "avatars";
+
+const toastConfig = {
+  success: (props: any) => (
+    <BaseToast
+      {...props}
+      style={{
+        borderLeftColor: "#25671E",
+        borderRightColor: "#25671E",
+        backgroundColor: "#25671E",
+        width: "70%",
+        height: 40,
+      }}
+      contentContainerStyle={{ paddingHorizontal: 5 }}
+      text1Style={{
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "400",
+        textAlign: "center",
+      }}
+    />
+  ),
+};
 
 export default function profile() {
   const [fullName, setFullName] = useState<string>("");
@@ -27,6 +51,7 @@ export default function profile() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [avatar, setAvatar] = useState<string | any>(avatarPlaceholder);
   const [selectedImage, setSelectedImage] = useState<string | any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user, updateUser, setRefresh } = useAuth();
 
@@ -90,48 +115,71 @@ export default function profile() {
     setIsModalVisible(false);
   };
 
+  const showToast = (msg: string) => {
+    Toast.show({
+      type: "success",
+      text1: msg,
+    });
+  };
+
   const onSave = async () => {
-    let new_avatar = selectedImage ? selectedImage : userData.avatarFilePath;
-    let new_name =
-      fullName !== userData.fullName ? fullName : userData.fullName;
+    try {
+      setIsLoading(true);
 
-    let filePath: any;
+      let new_avatar = selectedImage ? selectedImage : userData.avatarFilePath;
+      let new_name =
+        fullName !== userData.fullName ? fullName : userData.fullName;
 
-    // If userData, avatarFilePath is empty then upload a new avatar
-    if (!userData.avatarFilePath && new_avatar) {
-      const newFilePath = `public/avatar${Date.now()}`;
-      const { data, error } = await storageService.uploadImage(
-        new_avatar,
-        newFilePath,
-        BUCKET_NAME,
-      );
-      filePath = data?.path;
-    } else if (userData.avatarFilePath) {
-      const { data, error } = await storageService.updateImage(
-        new_avatar,
-        userData.avatarFilePath,
-        BUCKET_NAME,
-      );
-      filePath = data?.path;
-    }
+      let filePath: any;
 
-    /***
-     * If user has changed the avatar the then return the new avatar url else return old avatar url
-     ***/
-    let avatarUrl = storageService.getImageUrl(BUCKET_NAME, filePath);
+      // If userData, avatarFilePath is empty then upload a new avatar
+      if (!userData.avatarFilePath && new_avatar) {
+        const newFilePath = `public/avatar${Date.now()}`;
+        const { data, error } = await storageService.uploadImage(
+          new_avatar,
+          newFilePath,
+          BUCKET_NAME,
+        );
+        filePath = data?.path;
+      } else if (userData.avatarFilePath) {
+        const { data, error } = await storageService.updateImage(
+          new_avatar,
+          userData.avatarFilePath,
+          BUCKET_NAME,
+        );
+        filePath = data?.path;
+      }
 
-    avatarUrl = avatarUrl !== undefined ? avatarUrl : userData.avatarUrl;
+      /***
+       * If user has changed the avatar the then return the new avatar url else return old avatar url
+       ***/
+      let avatarUrl = storageService.getImageUrl(BUCKET_NAME, filePath);
 
-    const { success } = await updateUser(new_name, avatarUrl, filePath);
+      avatarUrl = avatarUrl !== undefined ? avatarUrl : userData.avatarUrl;
 
-    if (success) {
-      Alert.alert("User data update successfully!");
-      setAvatar(avatarUrl);
+      const { success } = await updateUser(new_name, avatarUrl, filePath);
+
+      if (success) {
+        if (fullName != userData.fullName) {
+          showToast("Full name updated");
+        } else if (!success) {
+          showToast("Sorry, couldn't updated full name");
+        }
+
+        if (selectedImage) {
+          showToast("Profile photo updated");
+        }
+
+        setAvatar(avatarUrl);
+        setRefresh(true);
+      }
+    } catch (error) {
+      console.log("profile :: Error :: ", error);
+    } finally {
+      setIsLoading(false);
       setShowNameEdit(false);
-      setRefresh(true);
+      setShowAvatarEdit(false);
     }
-
-    setShowAvatarEdit(false);
   };
 
   useEffect(() => {
@@ -145,16 +193,40 @@ export default function profile() {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => setIsModalVisible(true)}>
-        <Image
-          source={selectedImage ? selectedImage.uri : avatar}
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-          }}
-        />
-      </Pressable>
+      {/* Profile picture and Progressbar section */}
+      <View
+        style={{
+          flex: 0,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Pressable onPress={() => setIsModalVisible(true)}>
+          <Image
+            source={selectedImage ? selectedImage.uri : avatar}
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+            }}
+          />
+
+          {isLoading && (
+            <View
+              style={{
+                position: "absolute",
+                top: 10,
+                left: 0,
+                right: 0,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ProgressBar color="red" size={70} />
+            </View>
+          )}
+        </Pressable>
+      </View>
       <Text
         style={[styles.titleLabel, { fontWeight: "400" }]}
         onPress={() => setIsModalVisible(true)}
@@ -225,6 +297,8 @@ export default function profile() {
           onClick={handleGallery}
         />
       </AvatarPickerModal>
+
+      <Toast config={toastConfig} position="bottom" bottomOffset={20} />
     </View>
   );
 }
