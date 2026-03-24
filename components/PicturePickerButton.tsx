@@ -12,7 +12,7 @@ export default function PicturePickerButton({ iconName, label, onClick }: Props)
   return (
     <View style={styles.buttonContent}>
       <TouchableOpacity style={{ flexDirection:'row', gap: 20, alignItems: 'center' }} onPress={onClick}>
-        <Ionicons name={ iconName === "camera" ? 'camera-outline': 'image-outline'} size={26} />
+        <Ionicons name={iconName} size={26} />
         <Text style={styles.buttonLabel}>{label}</Text>
       </TouchableOpacity>
     </View>
