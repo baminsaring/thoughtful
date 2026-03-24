@@ -2,6 +2,7 @@ import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import SplashScreenController from "./splash";
 //import { supabase } from "@/lib/supabase";
 
 export default function RootLayout() {
@@ -21,13 +22,14 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
+      <SplashScreenController />
       <RootNavigator />
     </AuthProvider>
   );
 }
 
 function RootNavigator() {
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   //if (isLoading) return null;
 
