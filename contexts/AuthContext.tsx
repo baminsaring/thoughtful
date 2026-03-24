@@ -44,9 +44,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       if (currentUser) {
         setIsLoggedIn(true);
         setUser(currentUser);
+        setIsLoading(false)
       } else {
         setIsLoggedIn(false);
         setUser(null);
+        setIsLoading(false)
       }
     } catch (error) {
       console.log("CheckUser: Error: ", error);
@@ -59,17 +61,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const signUp = async (fullName: string, email: string, password: string) => {
     try {
-      setIsLoading(true);
       const { data, error } = await authService.signUpWithEmail(
         fullName,
         email,
         password,
       );
-      setIsLoading(false);
 
       await signIn(email, password);
     } catch (error) {
-      setIsLoading(false);
       console.log("Sign up failed!", error);
     }
   };

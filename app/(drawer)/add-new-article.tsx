@@ -81,7 +81,7 @@ export default function AddNewArticle() {
 
   useFocusEffect(
     useCallback(() => {
-      
+
       navigation.setOptions({
         title: isEditScreen ? "Edit Article" : "Create Article",
       });
