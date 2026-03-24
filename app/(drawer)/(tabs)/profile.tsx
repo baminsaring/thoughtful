@@ -92,7 +92,9 @@ export default function profile() {
 
   const onSave = async () => {
     let new_avatar = selectedImage ? selectedImage : userData.avatarFilePath;
-    let new_name = fullName != userData.fullName ? fullName : userData.fullName;
+    let new_name =
+      fullName !== userData.fullName ? fullName : userData.fullName;
+
     let filePath: any;
 
     // If userData, avatarFilePath is empty then upload a new avatar
@@ -113,16 +115,20 @@ export default function profile() {
       filePath = data?.path;
     }
 
-    if (filePath) {
-      const avatarUrl = storageService.getImageUrl(BUCKET_NAME, filePath);
+    /***
+     * If user has changed the avatar the then return the new avatar url else return old avatar url
+     ***/
+    let avatarUrl = storageService.getImageUrl(BUCKET_NAME, filePath);
 
-      const { success } = await updateUser(new_name, avatarUrl, filePath);
+    avatarUrl = avatarUrl !== undefined ? avatarUrl : userData.avatarUrl;
 
-      if (success) {
-        setAvatar(avatarUrl);
-        Alert.alert("Data update successfully!");
-        setRefresh(true);
-      }
+    const { success } = await updateUser(new_name, avatarUrl, filePath);
+
+    if (success) {
+      Alert.alert("User data update successfully!");
+      setAvatar(avatarUrl);
+      setShowNameEdit(false);
+      setRefresh(true);
     }
 
     setShowAvatarEdit(false);
@@ -172,7 +178,17 @@ export default function profile() {
               onChangeText={setFullName}
               placeholder="Change your name"
             />
-            <TouchableOpacity onPress={() => setShowNameEdit(!showNameEdit)}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#e3e1e19c",
+                height: 35,
+                justifyContent: "center",
+              }}
+              onPress={() => {
+                setShowNameEdit(!showNameEdit);
+                setFullName(userData.fullName);
+              }}
+            >
               <Ionicons name="close-outline" size={24} />
             </TouchableOpacity>
           </View>
@@ -199,12 +215,12 @@ export default function profile() {
 
       <AvatarPickerModal isVisible={isModalVisible} onClose={onModalClose}>
         <PicturePickerButton
-          iconName="camera"
+          iconName="camera-outline"
           label="Camera"
           onClick={handleCamera}
         />
         <PicturePickerButton
-          iconName="image"
+          iconName="image-outline"
           label="Gallery"
           onClick={handleGallery}
         />
@@ -232,10 +248,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   input: {
-    width: "90%",
+    height: 35,
+    width: "100%",
     color: "#111111",
     fontSize: 12,
-    backgroundColor: "#eae6e69c",
+    backgroundColor: "#e3e1e19c",
   },
   titleLabel: {
     marginTop: 15,
@@ -245,7 +262,7 @@ const styles = StyleSheet.create({
   button: {
     height: 40,
     width: 100,
-    backgroundColor: "green",
+    backgroundColor: "black",
     marginTop: 50,
     borderRadius: 10,
     justifyContent: "center",
