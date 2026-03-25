@@ -202,6 +202,7 @@ export default function profile() {
         }}
       >
         <Pressable onPress={() => setIsModalVisible(true)}>
+          {/* Profile picture */}
           <Image
             source={selectedImage ? selectedImage.uri : avatar}
             style={{
@@ -211,6 +212,7 @@ export default function profile() {
             }}
           />
 
+          {/* Progress bar */}
           {isLoading && (
             <View
               style={{
@@ -227,6 +229,8 @@ export default function profile() {
           )}
         </Pressable>
       </View>
+
+      {/* Edit Label */}
       <Text
         style={[styles.titleLabel, { fontWeight: "400" }]}
         onPress={() => setIsModalVisible(true)}
@@ -234,7 +238,9 @@ export default function profile() {
         Edit
       </Text>
 
+      {/* User Full Name */}
       <View style={styles.userInfoContainer}>
+        {/* User Full Name */}
         <Text style={styles.titleLabel}>Name</Text>
         {showNameEdit ? (
           <View
@@ -274,7 +280,7 @@ export default function profile() {
             </TouchableOpacity>
           </View>
         )}
-
+        {/* User Email */}
         <Text style={styles.titleLabel}>Email</Text>
         <Text>{userData.email}</Text>
       </View>

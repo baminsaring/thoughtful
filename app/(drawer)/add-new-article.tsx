@@ -8,6 +8,7 @@ import postService from "@/lib/postService";
 import { useAuth } from "@/contexts/AuthContext";
 import { useArticle } from "@/contexts/ArticeContext";
 import { useRoute } from "@/contexts/RouteContext";
+import Progressbar from "@/components/ProgressBar";
 
 import {
   useFocusEffect,
@@ -19,6 +20,7 @@ import {
 export default function AddNewArticle() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // const router = useRouter();
   const navigation = useNavigation();
@@ -34,27 +36,36 @@ export default function AddNewArticle() {
   const setData = () => {
     setTitle(article.title);
     setContent(article.content);
-  }
+  };
 
   const clearData = () => {
     setTitle("");
     setContent("");
-  }
+  };
 
   const handlePublish = async () => {
-    if (title.trim() && content.trim()) {
-      const { success } = await postService.uploadArticle(
-        title,
-        content,
-        user_id,
-      );
+    try {
+      if (title.trim() && content.trim()) {
+        setIsLoading(true);
 
-      if (success) {
-        Alert.alert("Article published!");
-        setRefresh(true);
-        setTitle("");
-        setContent("");
+        const { success } = await postService.uploadArticle(
+          title,
+          content,
+          user_id,
+        );
+
+        if (success) {
+          Alert.alert("Article published!");
+          setRefresh(true);
+          setTitle("");
+          setContent("");
+        }
       }
+    } catch (error) {
+      console.log("Error update or publishing article: ", error);
+      
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,7 +92,6 @@ export default function AddNewArticle() {
 
   useFocusEffect(
     useCallback(() => {
-
       navigation.setOptions({
         title: isEditScreen ? "Edit Article" : "Create Article",
       });
@@ -121,6 +131,22 @@ export default function AddNewArticle() {
         label={isEditScreen ? "Update" : "Publish"}
         onClick={handlePublish}
       />
+
+      {isLoading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 30,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Progressbar color="blue" size={80} />
+        </View>
+      )}
     </View>
   );
 }
@@ -128,6 +154,7 @@ export default function AddNewArticle() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: "relative",
     width: "100%",
     alignItems: "center",
     padding: 10,
