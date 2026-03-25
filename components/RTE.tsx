@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 0,
     height: 400,
-    borderWidth: 1
+    borderWidth: 0.3,
   },
   keyboardAvoidingView: {
     position: "absolute",
