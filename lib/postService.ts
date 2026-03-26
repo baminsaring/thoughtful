@@ -60,7 +60,7 @@ const postService = {
         }
     },
 
-    async updateArticle(articleId: number ,title: string, content: string) {
+    async updateArticle(articleId: number ,title: string , content: string) {
         try {
             const { data, error } = await supabase
             .from(TABLE_NAME)

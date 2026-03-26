@@ -21,9 +21,10 @@ export default function AddNewArticle() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [clearContent, setClearContent] = useState<boolean>(false);
 
-  // const router = useRouter();
   const navigation = useNavigation();
+  // const router = useRouter();
   // const { headerTitle } = useLocalSearchParams();
 
   const { isEditScreen, setIsEditScreen } = useRoute();
@@ -63,7 +64,6 @@ export default function AddNewArticle() {
       }
     } catch (error) {
       console.log("Error update or publishing article: ", error);
-      
     } finally {
       setIsLoading(false);
     }
@@ -72,13 +72,13 @@ export default function AddNewArticle() {
   const handleUpdate = async () => {
     try {
       if (title.trim() && content.trim()) {
-        const { success } = await postService.uploadArticle(
+        const response = await postService.updateArticle(
+          article.id,
           title,
-          content,
-          user_id,
+          content
         );
 
-        if (success) {
+        if (response) {
           Alert.alert("Article published!");
           setRefresh(true);
           setTitle("");
@@ -98,14 +98,11 @@ export default function AddNewArticle() {
 
       if (isEditScreen) {
         setData();
+        console.log("Content: ", content);
       } else {
         clearData();
       }
-
-      return () => {
-        setIsEditScreen(false);
-      };
-    }, [refresh, isEditScreen]),
+    }, [isEditScreen]),
   );
 
   return (
@@ -127,10 +124,17 @@ export default function AddNewArticle() {
         />
       </View>
 
-      <Button
-        label={isEditScreen ? "Update" : "Publish"}
-        onClick={handlePublish}
-      />
+      {isEditScreen ? (
+        <Button
+          label="Update"
+          onClick={handleUpdate}
+        />
+      ) : (
+        <Button
+          label="Publish"
+          onClick={handlePublish}
+        />
+      )}
 
       {isLoading && (
         <View
