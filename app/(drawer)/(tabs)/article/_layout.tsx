@@ -64,6 +64,7 @@ export default function ArticleLayout() {
       } else {
         setIsBookmark(false);
       }
+      
     }, [bookmarksId, article.id])
   );
 
