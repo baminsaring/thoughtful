@@ -33,11 +33,11 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    color: "#111111",
+    color: "#050505",
     fontSize: 12,
-    backgroundColor: "#eae6e69c",
+    backgroundColor: "#fbf8f89c",
     paddingHorizontal: 10,
     borderRadius: 10,
-    borderWidth: 1,
+    borderWidth: 0.3,
   },
 });

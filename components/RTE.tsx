@@ -27,6 +27,9 @@ export default function RTE({ initialContent, onContentChange, clearContent }: P
     }
   });
 
+  const setContent = async () => {
+    await editor.setContent(initialContent);
+  }
 
   const handleHtml = async () => {
     const htmlContent = await editor.getHTML();
@@ -38,6 +41,9 @@ export default function RTE({ initialContent, onContentChange, clearContent }: P
   }
 
   useEffect(() => {
+    console.log("Content data: ", initialContent);
+    setContent();
+    
     if (clearContent) clearContentData();
   }, [clearContent])
 

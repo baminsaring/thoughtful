@@ -21,7 +21,7 @@ export default function AddNewArticle() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [clearContent, setClearContent] = useState<boolean>(false);
+  const [clearContent, setClearContent] = useState<boolean>(true);
 
   const navigation = useNavigation();
   // const router = useRouter();
@@ -97,12 +97,16 @@ export default function AddNewArticle() {
       });
 
       if (isEditScreen) {
+        setClearContent(false);
         setData();
-        console.log("Content: ", content);
       } else {
         clearData();
       }
-    }, [isEditScreen]),
+
+      return () => {
+        setIsEditScreen(false);
+      }
+    }, [isEditScreen, refresh]),
   );
 
   return (
@@ -120,7 +124,7 @@ export default function AddNewArticle() {
         <RTE
           initialContent={content}
           onContentChange={setContent}
-          clearContent={refresh}
+          clearContent={clearContent}
         />
       </View>
 
